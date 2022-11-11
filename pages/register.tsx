@@ -3,8 +3,51 @@ import Head from "next/head";
 import HeaderGeneric from "../src/components/common/headerGeneric";
 import { Button, Container, Form, FormGroup, Input, Label } from "reactstrap";
 import Footer from "../src/components/common/footer";
+import { FormEvent, useState } from "react";
+import authService from "../src/services/authService";
+import { useRouter } from "next/router";
+import ToastComponent from "../src/components/common/toast";
 
 const Register = function () {
+  const router = useRouter();
+  const [toastIsOpen, setToastIsOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+    const firstName = formData.get("firstName")!.toString();
+    const lastName = formData.get("lastName")!.toString();
+    const phone = formData.get("phone")!.toString();
+    const birth = formData.get("birth")!.toString();
+    const email = formData.get("email")!.toString();
+    const password = formData.get("password")!.toString();
+    const confirmPassword = formData.get("confirmPassword")!.toString();
+    const params = { firstName, lastName, phone, birth, email, password };
+
+    if (password != confirmPassword) {
+      setToastIsOpen(true);
+      setTimeout(() => {
+        setToastIsOpen(false);
+      }, 1000 * 3);
+      setToastMessage("As senhas não são iguais. Tente novamente.");
+
+      return;
+    }
+
+    const { data, status } = await authService.register(params);
+
+    if (data.status === 201) {
+      router.push("/login?sucess=true");
+    } else {
+      setToastIsOpen(true);
+      setTimeout(() => {
+        setToastIsOpen(false);
+      }, 1000 * 3);
+      setToastMessage(data.message);
+    }
+  };
+
   return (
     <>
       <Head>
@@ -19,7 +62,7 @@ const Register = function () {
           <p className={styles.formTitle}>
             <strong>Bem-vindo(a) a Unidev!</strong>
           </p>
-          <Form className={styles.form}>
+          <Form className={styles.form} onSubmit={handleRegister}>
             <p className="text-center h2">
               <strong>Crie sua conta</strong>{" "}
             </p>
@@ -82,7 +125,7 @@ const Register = function () {
                 className={styles.input}
               />
             </FormGroup>
-            {/* birth date */}
+            {/* birth */}
             <FormGroup>
               <Label for="birth" className={styles.label}>
                 DATA DE NASCIMENTO
@@ -135,6 +178,11 @@ const Register = function () {
           </Form>
         </Container>
         <Footer />
+        <ToastComponent
+          color="bg-danger"
+          isOpen={toastIsOpen}
+          message={toastMessage}
+        />
       </main>
     </>
   );
