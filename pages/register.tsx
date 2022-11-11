@@ -2,7 +2,7 @@ import Head from "next/head";
 import HeaderGeneric from "../src/components/common/headerGeneric";
 import Footer from "../src/components/common/footer";
 import { useRouter } from "next/router";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { Button, Container, Form, FormGroup, Input, Label } from "reactstrap";
 import authService from "../src/services/authService";
 import ToastComponent from "../src/components/common/toast";
@@ -12,6 +12,13 @@ const Register = function () {
   const router = useRouter();
   const [toastIsOpen, setToastIsOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+
+  useEffect(() => {
+    if (sessionStorage.getItem("unidev-token")) {
+      router.push("/home");
+    }
+  }, []);
+
   const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -57,7 +64,11 @@ const Register = function () {
       </Head>
 
       <main className={styles.main}>
-        <HeaderGeneric logoUrl="/" btnUrl="/login" btnContent="Já possuo uma conta" />
+        <HeaderGeneric
+          logoUrl="/"
+          btnUrl="/login"
+          btnContent="Já possuo uma conta"
+        />
         <Container className="py-5">
           <p className={styles.formTitle}>
             <strong>Bem-vindo(a)!</strong>
