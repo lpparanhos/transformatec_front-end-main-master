@@ -1,12 +1,12 @@
-import styles from "../styles/registerLogin.module.scss";
 import Head from "next/head";
 import HeaderGeneric from "../src/components/common/headerGeneric";
-import { Button, Container, Form, FormGroup, Input, Label } from "reactstrap";
 import Footer from "../src/components/common/footer";
-import { FormEvent, useState } from "react";
-import authService from "../src/services/authService";
 import { useRouter } from "next/router";
+import { FormEvent, useState } from "react";
+import { Button, Container, Form, FormGroup, Input, Label } from "reactstrap";
+import authService from "../src/services/authService";
 import ToastComponent from "../src/components/common/toast";
+import styles from "../styles/registerLogin.module.scss";
 
 const Register = function () {
   const router = useRouter();
@@ -37,8 +37,8 @@ const Register = function () {
 
     const { data, status } = await authService.register(params);
 
-    if (data.status === 201) {
-      router.push("/login?sucess=true");
+    if (status === 201) {
+      router.push("/login?registered=true");
     } else {
       setToastIsOpen(true);
       setTimeout(() => {
@@ -57,10 +57,10 @@ const Register = function () {
       </Head>
 
       <main className={styles.main}>
-        <HeaderGeneric logoUrl="/" btnUrl="/login" btnContent="Login" />
+        <HeaderGeneric logoUrl="/" btnUrl="/login" btnContent="Já possuo uma conta" />
         <Container className="py-5">
           <p className={styles.formTitle}>
-            <strong>Bem-vindo(a) a Unidev!</strong>
+            <strong>Bem-vindo(a)!</strong>
           </p>
           <Form className={styles.form} onSubmit={handleRegister}>
             <p className="text-center h2">
@@ -75,7 +75,7 @@ const Register = function () {
                 id="firstName"
                 name="firstName"
                 type="text"
-                placeholder="Qual o seu nome?"
+                placeholder="Digite o seu nome"
                 required
                 maxLength={20}
                 className={styles.inputName}
@@ -90,7 +90,7 @@ const Register = function () {
                 id="lastName"
                 name="lastName"
                 type="text"
-                placeholder="Qual o seu sobrenome?"
+                placeholder="Digite o seu sobrenome"
                 required
                 maxLength={20}
                 className={styles.inputName}
@@ -120,7 +120,7 @@ const Register = function () {
                 id="email"
                 name="email"
                 type="email"
-                placeholder="Digite o seu email"
+                placeholder="exemplo@email.com"
                 required
                 className={styles.input}
               />
